@@ -27,6 +27,35 @@ const submitBnt = document.getElementById('submit-bnt');
 const cancelarBnt = document.getElementById('cancelar-bnt');
 const formTitle = document.getElementById('form-title');
 const tabelaBody = document.getElementById('sites-body');
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nome = nomeInput.value.trim();
+    const endereco = enderecoInput.value.trim();
+    
+    //voltar aqui
+    if (editandoId !== null){
+        //Editando um novo registro
+        sites[index] = {id:editandoId, nome, endereco}
+        if(index !== -1){
+            sites[index] = {id:editandoId, nome, endereco};
+        }
+    }else{
+        //Cadastrando um novo registro
+        const novoId = sites.length > 0? Math.max(...sites.map(site => site.id)) +1 : 1;
+        sites.push({id:novoId, nome, endereco});
+    }
+
+    
+    renderizarTabela();
+    limparFormulario();
+});
+
+function limparFormulario(){
+    form.reset();
+    siteIdInput.value='';
+}
+
 //Criando uma função que sempre acrescenta
 function renderizarTabela(){
     tabelaBody.innerHTML = '';
@@ -54,18 +83,26 @@ function renderizarTabela(){
         const tdAcoes = document.createElement('td');
         tdAcoes.textContent = 'acoes'
 
-        //Botao Editar
+        //Botao Editar  
         const editarBtn = document.createElement('button')
         editarBtn.textContent = 'Editar'
 
         //Botao Excluir
         const excluirBtn = document.createElement('button')
         excluirBtn.textContent = 'Excluir'
+        excluirBtn.className = 'cancelar'
+        excluirBtn.addEventListener('click', () => excluirSite(site.id))
+
+
+        //adicionar os bootoes a coluna
+        tdAcoes.appendChild(editarBtn);
+        tdAcoes.appendChild(excluirBtn);
 
         //Montar a Linha
         tr.appendChild(tdNome);
         tr.appendChild(tdEndereco);
         tr.appendChild(tdAcoes);
+
         //Colocar a Lonha no corpo da Tabela
         tabelaBody.appendChild(tr);
     });
